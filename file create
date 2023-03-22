@@ -1,0 +1,85 @@
+
+index.js
+
+
+const exprees=require('express');  /// module
+const path = require('path');  // path calling for file
+const app=exprees(); // call function exprees
+const multer=require('multer'); //Multer to handle multipart/form-data using Node.js, Express and MongoDB
+app.set('views',path.join(__dirname,"views"));  // set the view engine as path
+app.set('view engine',"ejs")  // here we use ejs template
+var storage=multer.diskStorage( {
+
+        destination:function (req,file,callback)//destination---destination path for uploades fille where the infromation store we can give string or function if function means it contain lot of informaion
+//          req -- request file-- response callback---callback function
+{
+            callback(null,'upload');
+//           we can give it like 
+//           destination:'uploads' // it is very simple
+    },
+    filename:function(req,file,callback)  // set name for file we use function for this 
+    {
+        callback(null,file.originalname.replace(/\.[^/.]+$/,"") +'_' + Date.now()+path.extname(file.originalname))  // fielsname:Name of the form field associated with this file
+         // file.originalname.replace() -> give the original name of the image 
+         }
+   
+})
+const size=2*1000*1000    // it used for set limit 2mb
+let upload =multer(
+    {
+        storage: storage,
+        limits:{
+            fileSize:size  // file limit is
+        },
+        fileFilter:function(req,file,callback){ //file type: img/jpg/jpeg
+            let filetype=/jpeg|jpg|png/;        // only accept these file type
+        let test=filetype.test(file.mimetype)   ;     // it test filetype.test  test(filename above line) if file type is jpeg /jpg/png return bolean
+ let exten=filetype.test(path.extname(file.originalname).toLowerCase())
+      if(test && exten){
+ return callback(null,true)
+ }
+ callback("error file is only support for "+filetype);
+        }
+ }).single('mypic')
+ app.get('/',(req,res)=>{
+    res.render('singup')
+ })
+ app.post('/upload',(req,res,next)=>{
+    upload(req,res,function(err){
+        if(err){
+        res.send(err)
+    }
+    else{
+        res.send("sucess")
+    }
+    })
+ })
+ app.listen(8080,()=>{
+    console.log("server is running");
+ })
+ // now file name is undefine like mypic_1679505902071.jpg we want to change 
+ //error like    --- error file is only support for /jpeg|jpg|png/
+ // if we select file more than 2mb its also throw error
+ 
+ 
+ singup.ejs
+ 
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=
+    , initial-scale=1.0">
+    <title>file upload in nodejs</title>
+</head>
+<body>
+    <h1>single file</h1>
+    <form method="POST" action="/upload" enctype="multipart/form-data">
+        <span> upload</span>
+<input type="file" name="mypic" required>
+<input type="submit" value="submit"> 
+
+    </form>
+</body>
+</html>
