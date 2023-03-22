@@ -1,0 +1,190 @@
+
+//-----------------------------------------EXPRESS JS-----------------------------------------------
+//simplification of node js it is productivity depedence
+// to use express js install express module :
+        //npm install express
+//to use express module, import using below command:
+const express = require('express');
+const app=express();
+
+//working of express js:
+// express JS is a routing and middleware framework for handling different routing of webpage and it works between request and response cycle.
+
+/* MIDDLEWARE FUNCTIONS :
+ * functions that have access to the request object and response object and next function in application's request-response cycle.
+ */
+
+
+/*-------------------------------------middleware modules---------------------------------------------------
+
+example modules :
+* body-parser - parses http request body (datas can be accessed easily)
+* compression - compresses the http responses
+* connect-grid - generate unique request ID
+*/
+//---------------------------------app.use()-------------------------------------------
+//app.use() method is used to set up middleware function when the specified url is requested.
+//handles both get and post methods.
+//syntax : app.use(path,callback(req,res,next)) -->note : next is optional
+
+app.use('/message',(req,res)=>{
+    console.log(req); //when client request this url , the following function will be executed.
+});
+
+//------------------------------------sending responses------------------------------------
+app.use('/message',(req,res)=>{
+    res.send('<h1>Hello from 1st</h1>'); //send method is used to send response (similar to res.write in nodeJS)
+});
+
+//---------------------------------------next argument in callback-------------------------
+
+//when we call next method , it passes through the next middleware function.
+app.use('/message',(req,res,next)=>{   //middleware 1
+    res.send('<h1>Hello from 1st</h1>');
+    next();
+}); 
+app.use('/',(req,res,next)=>{   //middleware 2
+    res.send('<h1>Hello from 2nd</h1>');
+});
+//OUTPUT (if requested url is '/message'): Hello from 1st
+//        Hello from 2nd
+
+//without calling next :
+
+app.use('/message',(req,res,next)=>{   //middleware 1
+    console.log('<h1>Hello from 1st</h1>');
+}); 
+app.use('/',(req,res,next)=>{   //middleware 2
+    console.log('<h1>Hello from 2nd</h1>');   // only applicable for console.log not for res.send
+});
+//OUTPUT(if requested url is '/message'): Hello from 1st
+
+//--------------------------------------------sending html files---------------------------------------
+//files can be sent using sendFile() method
+//to send files , first we need to give full file path.this can be done using path module.
+//__dirname --> holds the path starting from computer till this folder
+//path.join() --> using path.join method, starting path and current file path inside is joined to make full path
+const path = require('path');
+app.use('/',(req,res)=>{
+    res.sendFile(path.join(__dirname),'index.html');
+})
+
+//---------------------------------------------Handling data------------------------------------------
+//to handle datas easily install body-parser module:
+          //npm install body-parser
+//body-parser module used to process data sent to the request body. To use body-parser, follow the below command:
+          let bodyparser = require('body-parser');
+          app.use(bodyparser.urlencoded({}))//optionalextended:true}));//bodyparser uses query string . so if we give extended as true, it allows using quey string . if false , it doesnt allow.
+
+//if we submit the form containing input name as name,age, we can access easily by giving:
+          let name  = req.body.name;
+          let age = req.body.age;
+//------------------------------------------Handling only get requests ----------------------------------
+
+// to handle only get requests , app.get(path,callback) is used.
+app.get('/',(req,res,next)=>{
+    res.sendFile(path.join(__dirname,'login.html'));
+ })
+
+ //------------------------------------------Handling only post requests--------------------------------
+ // to handle only posts requests , app.post(path,callback) is used.
+ app.post('/',(req,res,next)=>{
+    console.log(req.body.name);
+    console.log(req.body.age);
+   res.sendFile(path.join(__dirname,'login.html'));
+})
+
+//----------------------------------serving static files------------------------------------
+//while loading html file,only htnl file gets loaded . linked css and image files are not get loaded. to make them loaded , we use,
+          //app.use(express.static(path))
+
+//create a separate folder (eg:public folder) and place all the files that needs to be public. then use below command:
+
+app.use(express.static(path.join(__dirname),'public'));
+
+
+
+
+
+
+//--------------------------------------------EXPRESS JS TEMPLATING ENGINES-----------------------------
+
+/*Templating engines enables us to use static template files in your application.
+*using templating engines , we can pass variables into static file(html file)  from backend. we can change in html files
+
+*                Popular templating engines in express JS:
+                 1.PUG
+                 2.EJS
+                 3.Handlebars
+
+ uses:
+ *To reload automatically when we change the static template files
+ *To pass value to the template files
+----------------------------------------1.PUG:----------------------------------------------
+//to install PUG templating engine , install using:
+                             npm install pug
+
+//to use PUG in your application , set the view engine as pug :
+                    app.set('view engine' , 'pug');
+
+view engine: used for rendering web pages (template files)
+            
+//-------------------SENDING FILES--------------------------------
+to send files using template engines , use render() method instead of sendFile(path.join(__dirname)) method.
+*/
+
+app.use('/',(req,res)=>{
+    res.render('index'); //NOTE: the html files should be replaced with .pug extension index.pug
+})
+
+//------------------------passing values to the html page----------------
+/
+app.use('/',(req,res)=>{
+    res.render('index',{title:"pug file"}); //NOTE: the html files should be replaced with .pug extension
+})
+//in index file: 
+//to print the passed value.. #{} is used.
+// <title> #{title} </title>
+
+//-------------------------------------------EJS(EMBEDED JAVASCRIPT TEMPLATING)------------------------------------------
+// simple syntax
+//to install EJS templating engine , install using:
+                             //npm install ejs
+
+//to use EJS in your application , set the view engine as ejs :
+                    app.set('view engine' , 'ejs');
+            
+
+//------------------------passing values to the html page----------------
+
+app.use('/',(req,res)=>{
+    res.render('index',{title:"ejs file"}); //NOTE: the html files should be replaced with .ejs extension
+})
+//in index file: 
+//to print the passed value.. <%= %> is used. 
+// <title> <%= title %> </title>
+//<%= %> = we use only text means like title heading paragraph 
+//<% %> this used for statement  object collection
+
+//-------------------------------------------HANDLEBARS------------------------------------------
+
+//to install handlebar templating engine , install using:
+                             //npm install express-handlebars
+
+// handle is the best template compare to other 
+
+//to use handlebars in your application:
+const {engine} = require('express-handlebars');
+// to reduce the length of handlebar extenstion we set the extension as .hbs
+app.engine('hbs' , engine({extreme:'hbs',defaultLayout:'main'})) //default layout means main page (like index.html)
+
+//------------------------passing values to the html page----------------
+
+app.use('/',(req,res)=>{
+    res.render('index',{title:"handlebar file"}); //NOTE: the html files should be replaced with .hbs extension
+})
+//in index file: 
+//to print the passed value.. {{}} is used. 
+// <title> {{title}} </title>
+
+
