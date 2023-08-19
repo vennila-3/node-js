@@ -1,8 +1,36 @@
+
+
+
 ///--------------------------------------------------------NODE JS--------------------------------------------------------------
 /*
+
+What is Node.js?
+* Node.js is an open source server environment
+* Node.js is free
+* Node.js runs on various platforms (Windows, Linux, Unix, Mac OS X, etc.)
+* Node.js uses JavaScript on the server
+
+
+What Can Node.js Do?
+* Node.js can generate dynamic page content
+* Node.js can create, open, read, write, delete, and close files on the server
+* Node.js can collect form data
+* Node.js can add, delete, modify data in your database
+
+How nodejs works?
+* chrome browser have v8 engine it was written in c++ language.
+* it will convert java code into machine code like node.
+* node js have some modules( we want add some file in application means browser is not safe so node js have some modules like file,os,http)
+
+
+* Node js is javascript runtime. we can create web application
+*  it is not only web application we can use like robot work
+* it not only work within browser it can work anywhere in computer
 * NODE JS is a server side JS framework which act as a runtime environment to run JS in server side(backend).
 * It is used for creating server side and networking web applicatins.
 *                                     NODE JS = RUNTIME ENVIRONMENT + JS LIBRARY
+
+
 
 *------------------------Important features--------------------------
 * Extremely fast
@@ -72,7 +100,8 @@
 
    /*Syntax:  
    *fs.writeFileSync('file name','content');   (or)
-   *fs.writeFile('file name','content');
+   *fs.writeFile('file name','content');       it will create file and we can include content 
+   * fs.writeFileSync(hello.txt,"hiii");     
 
    *difference between write file and write file sync:
            1.write file - asynchronous function (3 arguments can be passed)
