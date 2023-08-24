@@ -34,7 +34,7 @@ How nodejs works?
 
 *------------------------Important features--------------------------
 * Extremely fast
-* Single threaded
+* Single threaded(event loop architecture)
 * No buffering
 * Asynchrounous & Event driven architecture
 * Non blocking
